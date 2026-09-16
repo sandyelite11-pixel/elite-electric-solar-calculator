@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="Elite Electric Utah solar and battery savings estimator.">
+  <title>Elite Electric | Utah Solar & Battery Savings Estimator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="site">
+  <header class="header">
+    <a class="brand" href="https://eliteelectricpro.com/" target="_blank" rel="noopener">
+      <img src="assets/elite-electric-logo.png" alt="Elite Electric">
+    </a>
+    <div class="header-actions">
+      <span class="status"><i></i> Utah Home Energy Estimator</span>
+      <a href="tel:+18019287219">(801) 928-7219</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">ELITE ELECTRIC · SOLAR + STORAGE</div>
+        <h1>What could solar & battery look like on <span>your home?</span></h1>
+        <p>Build a preliminary Utah solar plan in about 60 seconds. See estimated system size, production, battery storage, outage runtime and a planning-level project range.</p>
+        <div class="hero-pills">
+          <b>✓ No login</b><b>✓ No obligation</b><b>✓ Mobile friendly</b><b>✓ Utah-focused</b>
+        </div>
+      </div>
+      <div class="hero-preview">
+        <div class="preview-head"><span>LIVE ESTIMATE</span><i>● CALCULATING</i></div>
+        <div class="preview-number" id="previewKw">— <small>kW</small></div>
+        <div class="preview-label">Estimated solar system</div>
+        <div class="preview-grid">
+          <div><strong id="previewOffset">—</strong><span>bill offset</span></div>
+          <div><strong id="previewBattery">—</strong><span>battery</span></div>
+          <div><strong id="previewPrice">—</strong><span>planning range</span></div>
+        </div>
+        <div class="preview-progress"><span id="previewProgress"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="calculator" id="calculator">
+    <div class="steps-bar">
+      <div class="steps-meta"><span id="stepText">1 / 5</span><b id="stepPct">20%</b></div>
+      <div class="bar"><span id="barFill"></span></div>
+      <div class="steps">
+        <div class="step active" data-step="1"><i>01</i><span>Home</span></div>
+        <div class="step" data-step="2"><i>02</i><span>Roof</span></div>
+        <div class="step" data-step="3"><i>03</i><span>Battery</span></div>
+        <div class="step" data-step="4"><i>04</i><span>Results</span></div>
+        <div class="step" data-step="5"><i>05</i><span>Assessment</span></div>
+      </div>
+    </div>
+
+    <form id="form" novalidate>
+      <section class="screen active" data-screen="1">
+        <div class="screen-title"><label>01 / YOUR HOME</label><h2>Let's start with the electric bill.</h2><p>Your bill is the most useful starting point for estimating annual energy consumption.</p></div>
+        <div class="fields two">
+          <label class="field"><b>Utah ZIP code *</b><input id="zip" maxlength="5" inputmode="numeric" placeholder="84070"><small>For Utah ZIP codes, e.g. 84070.</small></label>
+          <label class="field"><b>Average monthly electric bill *</b><div class="money"><em>$</em><input id="bill" type="number" min="50" max="2500" value="165"></div><small>Use an average rather than one unusually high/low month.</small></label>
+        </div>
+        <div class="fields two">
+          <label class="field"><b>Home size</b><div class="suffix"><input id="sqft" type="number" min="500" max="15000" value="2200"><em>sq ft</em></div></label>
+          <label class="field"><b>Primary heating / large loads</b><select id="heating"><option value="gas">Gas / conventional</option><option value="heatpump">Heat pump</option><option value="electric">Electric resistance</option><option value="mixed">Mixed / not sure</option></select></label>
+        </div>
+        <div class="notice"><strong>Planning estimate only.</strong> Final system size, production, pricing, interconnection and battery configuration require a property-specific review.</div>
+      </section>
+
+      <section class="screen" data-screen="2">
+        <div class="screen-title"><label>02 / ROOF & SOLAR</label><h2>Tell us what the roof is like.</h2><p>These selections adjust the planning model for roof exposure and available solar area.</p></div>
+        <div class="choice-title">Primary roof direction</div>
+        <div class="cards four" id="orientation">
+          <button type="button" class="card selected" data-v="south"><strong>↑</strong><b>South</b><small>Strong exposure</small></button>
+          <button type="button" class="card" data-v="se"><strong>↗</strong><b>SE / SW</b><small>Good exposure</small></button>
+          <button type="button" class="card" data-v="ew"><strong>↔</strong><b>East / West</b><small>Good exposure</small></button>
+          <button type="button" class="card" data-v="north"><strong>↓</strong><b>Mostly North</b><small>Reduced exposure</small></button>
+        </div>
+        <div class="choice-title">Roof shading</div>
+        <div class="range-card">
+          <input id="shade" type="range" min="0" max="35" step="5" value="10">
+          <div><span>Minimal</span><b id="shadeLabel">10% shade</b><span>Heavy</span></div>
+        </div>
+        <div class="choice-title">Available roof area</div>
+        <div class="cards three" id="roofArea">
+          <button type="button" class="card selected" data-v="normal"><b>Normal</b><small>Plenty of usable roof area</small></button>
+          <button type="button" class="card" data-v="complex"><b>Complex</b><small>Multiple roof faces / obstructions</small></button>
+          <button type="button" class="card" data-v="limited"><b>Limited</b><small>Space may constrain panel count</small></button>
+        </div>
+        <div class="mini-note">The calculator uses an editable Utah planning production assumption. It is not a substitute for satellite imagery, shade analysis or a site survey.</div>
+      </section>
+
+      <section class="screen" data-screen="3">
+        <div class="screen-title"><label>03 / BATTERY BACKUP</label><h2>How much of the home should stay on?</h2><p>Choose an outage goal, then select the loads you want to prioritize.</p></div>
+        <div class="goal-cards" id="goals">
+          <button type="button" class="goal selected" data-v="essential"><span>🔌</span><b>Essential</b><small>Fridge, lights, Wi‑Fi and selected outlets</small></button>
+          <button type="button" class="goal" data-v="comfort"><span>🏠</span><b>Comfort</b><small>Add TV, fans and more everyday loads</small></button>
+          <button type="button" class="goal" data-v="whole"><span>⚡</span><b>Whole-home</b><small>Designed around larger loads and HVAC</small></button>
+        </div>
+        <div class="load-box">
+          <div class="load-head"><div><b>Backup loads</b><small>Typical planning wattages</small></div><button type="button" id="reset">Reset</button></div>
+          <div class="appliances" id="appliances"></div>
+          <div class="load-total">
+            <div><span>Simultaneous load</span><b id="watts">—</b></div>
+            <div><span>Daily backup energy</span><b id="daily">—</b></div>
+            <div><span>Suggested battery</span><b id="battery">—</b></div>
+          </div>
+        </div>
+        <label class="checkrow"><input id="resilience" type="checkbox" checked><span></span><div><b>Prioritize outage resilience</b><small>Keep more storage in the recommendation when sizing is close.</small></div></label>
+      </section>
+
+      <section class="screen" data-screen="4">
+        <div class="screen-title"><label>04 / YOUR RESULTS</label><h2>Your preliminary solar plan.</h2><p>Use these figures to start a conversation. A final design and quote must be based on your actual property.</p></div>
+        <div class="result-top">
+          <div><span>EST. SOLAR</span><strong id="rKw">—</strong><small>DC system size</small></div>
+          <div><span>ANNUAL OFFSET</span><strong id="rOffset">—</strong><small>modeled energy offset</small></div>
+          <div><span>BATTERY</span><strong id="rBattery">—</strong><small>usable storage target</small></div>
+        </div>
+        <div class="metrics">
+          <article><i>☀</i><span>Annual production</span><b id="rProduction">—</b><small>kWh / year</small></article>
+          <article><i>$</i><span>Annual electric spend</span><b id="rAnnual">—</b><small>before solar</small></article>
+          <article><i>◷</i><span>Essential backup</span><b id="rRuntime">—</b><small>modeled runtime</small></article>
+          <article><i>↘</i><span>Planning project range</span><b id="rPrice">—</b><small>before applicable rebates</small></article>
+        </div>
+        <div class="product-box">
+          <div class="box-title"><div><label>BATTERY CONFIGURATION</label><h3>Equipment paths shown by Elite Electric</h3></div><span id="rebatePill">RMP rebate: verify eligibility</span></div>
+          <div class="products" id="products"></div>
+        </div>
+        <div class="savings-box">
+          <div><label>25-YEAR PLANNING VIEW</label><h3>Modeled energy savings</h3><p id="savingsText">—</p></div>
+          <div class="savings-number"><strong id="savings25">—</strong><span>modeled utility spend avoided over 25 years*</span></div>
+        </div>
+        <div class="result-notes"><h3>How to read this estimate</h3><ul id="notes"></ul></div>
+        <div class="disclaimer">*This is a planning model, not a guaranteed savings statement. It does not model every utility charge, rate change, degradation, financing term, maintenance cost, tax situation, export-credit rule or outage pattern. Verify current incentives and utility rules before relying on them.</div>
+      </section>
+
+      <section class="screen" data-screen="5">
+        <div class="screen-title"><label>05 / NEXT STEP</label><h2>Turn the estimate into a property-specific design.</h2><p>Send your information to Elite Electric. The calculator results stay on this page; the contact form is loaded directly from your website.</p></div>
+        <div class="lead-summary">
+          <div><span>Your estimate</span><strong id="leadSummary">—</strong></div>
+          <div><span>Battery goal</span><strong id="leadBattery">—</strong></div>
+          <div><span>ZIP</span><strong id="leadZip">—</strong></div>
+        </div>
+        <div class="cta">
+          <div><label>ELITE ELECTRIC</label><h3>Request your solar + battery assessment</h3><p>Ask about system design, panel capacity, battery backup, RMP programs and current project pricing.</p></div>
+          <a href="tel:+18019287219">Call (801) 928-7219</a>
+        </div>
+        <div class="contact-head"><div><label>CONTACT FORM</label><h3>Send your details</h3></div><a href="https://eliteelectricpro.com/metform-form/contact-form/" target="_blank" rel="noopener">Open separately ↗</a></div>
+        <div class="iframe"><iframe src="https://eliteelectricpro.com/metform-form/contact-form/" title="Elite Electric contact form" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <p class="iframe-help">If your WordPress security headers prevent an iframe, use “Open separately.” The form URL remains your original Elite Electric MetForm URL.</p>
+      </section>
+
+      <div class="nav">
+        <button type="button" id="back" class="secondary hidden">← Back</button>
+        <span></span>
+        <button type="button" id="next" class="primary">Continue <b>→</b></button>
+      </div>
+    </form>
+  </main>
+
+  <footer>
+    <img src="assets/elite-electric-logo.png" alt="Elite Electric">
+    <span>Solar · Battery · Electrical · Utah</span>
+    <a href="https://eliteelectricpro.com/" target="_blank" rel="noopener">eliteelectricpro.com</a>
+    <a href="tel:+18019287219">(801) 928-7219</a>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
