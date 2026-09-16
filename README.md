@@ -32,7 +32,7 @@ If WordPress strips `<script>` tags from a Custom HTML block, put the iframe HTM
 
 ## Contact form
 The calculator uses the existing Elite Electric MetForm URL:
-https://eliteelectricpro.com/metform-form/contact-form/
+https://eliteelectricpro.com/lead/
 
 Because the form is hosted on a different origin, the calculator cannot inspect its internal height or inject values into its fields unless the WordPress page is explicitly configured to support a cross-origin messaging/prefill integration. The compact height + expand control is therefore intentional.
 
