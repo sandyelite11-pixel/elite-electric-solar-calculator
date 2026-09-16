@@ -1,71 +1,40 @@
-# Elite Electric — Utah Solar & Battery Calculator v2
+# Elite Electric — Utah Solar & Battery Calculator v4
 
-## What is included
+A static, responsive solar + battery planning calculator for Elite Electric. Built for GitHub + Vercel and easy WordPress iframe embedding.
 
-A polished, dependency-free static web application for GitHub + Vercel:
+## What's improved in v4
+- Logo is embedded directly in `index.html` with a fresh optimized PNG, so the header does not depend on a missing asset path.
+- The calculator now posts its real document height to a parent iframe using `postMessage`.
+- Included `EMBED-SNIPPET.html` with a WordPress Custom HTML snippet that automatically resizes the calculator iframe as the customer moves through each step.
+- Contact-form iframe is much more compact on desktop and mobile.
+- Added an **Expand form** control for customers who need more room.
+- Reduced mobile spacing, hero height, card padding, and calculator margins for a tighter phone experience.
 
-- Premium Elite Electric black/white/gold design
-- Supplied Elite Electric logo
-- Five-stage UX:
-  1. Home and bill
-  2. Roof and solar profile
-  3. Battery backup
-  4. Detailed results
-  5. Assessment/contact
-- Utah ZIP validation
-- Monthly bill → modeled annual usage
-- Roof orientation, shade and roof-area adjustments
-- Heating/load adjustment
-- Essential / comfort / whole-home battery goals
-- Appliance load selection
-- Solar system estimate
-- Annual production estimate
-- Modeled bill offset
-- Battery capacity and runtime
-- Planning project range
-- Battery product paths reflecting Elite Electric's published equipment pages
-- Planning RMP rebate display
-- 25-year modeled energy-spend-avoided view
-- Contact form iframe:
-  https://eliteelectricpro.com/metform-form/contact-form/
-- No database
-- No API key
-- No npm packages
+## Files
+- `index.html` — application markup
+- `styles.css` — responsive styling
+- `app.js` — calculator logic + auto-height messaging
+- `assets/` — backup logo assets
+- `EMBED-SNIPPET.html` — WordPress iframe embed with automatic height adjustment
+- `vercel.json` — basic security headers
 
-## Deploy
+## GitHub → Vercel
+1. Upload the contents of this folder to your GitHub repository. Keep `index.html` in the repository root.
+2. Import that repository into Vercel.
+3. Deploy as a static site; no build command or npm install is required.
+4. Copy the Vercel production URL.
+5. Open `EMBED-SNIPPET.html`, replace `https://YOUR-CALCULATOR.vercel.app/` with the real Vercel URL, and paste the snippet into a WordPress Custom HTML block.
 
-Upload the entire directory to a GitHub repository and import it into Vercel. It is a static site, so Vercel can deploy it directly.
+## WordPress embed
+The included snippet listens for `elite-electric-calculator-height` messages from the Vercel app. This avoids a fixed 2,900px iframe and removes most empty space on mobile and desktop.
 
-## Embed
+If WordPress strips `<script>` tags from a Custom HTML block, put the iframe HTML in the page and place the small JavaScript listener in an Elementor/WordPress HTML widget or the site's custom footer JavaScript area.
 
-After deployment:
+## Contact form
+The calculator uses the existing Elite Electric MetForm URL:
+https://eliteelectricpro.com/metform-form/contact-form/
 
-```html
-<iframe
-  src="https://YOUR-PROJECT.vercel.app/"
-  title="Elite Electric Utah Solar & Battery Calculator"
-  style="width:100%;min-height:2900px;border:0"
-  loading="lazy">
-</iframe>
-```
+Because the form is hosted on a different origin, the calculator cannot inspect its internal height or inject values into its fields unless the WordPress page is explicitly configured to support a cross-origin messaging/prefill integration. The compact height + expand control is therefore intentional.
 
-## Important calculation assumptions
-
-All core assumptions are deliberately in `app.js` so they are easy to edit:
-
-- Utah planning solar baseline: 4.8 equivalent full-sun hours/day
-- Electricity planning rate: $0.145/kWh
-- Solar installed-price planning range: $2,000–$2,625/kW
-- Battery price ranges and RMP planning rebates are based on the values currently published on Elite Electric's website and should be verified before publishing as a quote.
-- Battery usable energy is modeled at 90%.
-- Appliance wattages are planning values, not nameplate measurements.
-
-This application should be presented as an estimator, not a guaranteed savings calculator or quote.
-
-## Contact form iframe
-
-If the MetForm page refuses to render inside the Vercel iframe, the WordPress security headers may need to allow framing by your Vercel origin. The app includes an "Open separately" fallback.
-
-## Production recommendation
-
-Before advertising exact savings or rebates, replace the editable assumptions with Elite Electric's approved rate tables, utility territory rules, equipment costs, and incentive logic. For a future version, these values can be moved into a small JSON configuration file so marketing staff can update them without touching the calculator UI.
+## Planning disclaimer
+This tool is a planning estimator, not an engineering design, utility bill guarantee, quote, or financial/tax advice. Verify current utility incentives, rates, equipment availability, project pricing, and customer-specific eligibility before making commitments.

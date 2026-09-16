@@ -125,4 +125,23 @@ $("#zip").oninput=e=>e.target.value=e.target.value.replace(/\D/g,"").slice(0,5);
 $("#reset").onclick=()=>{Object.keys(S.loads).forEach(k=>S.loads[k]=["fridge","lights","wifi"].includes(k));renderLoads();calculate()};
 $("#next").onclick=()=>{if(valid()&&S.step<5)go(S.step+1)};
 $("#back").onclick=()=>{if(S.step>1)go(S.step-1)};
-renderLoads();calculate();
+
+function sendEmbedHeight(){
+  const height=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
+  if(window.parent && window.parent!==window){
+    window.parent.postMessage({type:"elite-electric-calculator-height",height},"*");
+  }
+}
+function initContactForm(){
+  const shell=$(".iframe-shell"), btn=$("#expandForm");
+  if(!shell||!btn)return;
+  btn.addEventListener("click",()=>{
+    const expanded=shell.classList.toggle("expanded");
+    btn.textContent=expanded?"Collapse form ↑":"Expand form ↗";
+    setTimeout(sendEmbedHeight,80);
+  });
+}
+window.addEventListener("load",()=>{sendEmbedHeight();setTimeout(sendEmbedHeight,350);setTimeout(sendEmbedHeight,1000);});
+window.addEventListener("resize",()=>setTimeout(sendEmbedHeight,100));
+if(window.ResizeObserver){new ResizeObserver(sendEmbedHeight).observe(document.body);}
+renderLoads();calculate();initContactForm();setTimeout(sendEmbedHeight,120);
