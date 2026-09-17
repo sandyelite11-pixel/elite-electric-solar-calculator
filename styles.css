@@ -64,3 +64,15 @@ form{padding:38px 36px 34px}
 .header{justify-content:flex-start}
 .brand{display:inline-flex;align-items:center}
 @media(max-width:620px){.header{height:58px;padding:0 14px}.brand img{width:116px;height:46px}}
+
+/* v6: keep the dedicated assessment form inside the calculator */
+.embedded-lead{margin-top:18px;border:1px solid #deded9;border-radius:17px;overflow:hidden;background:#fafafa}
+.embedded-lead-bar{height:42px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e6e6e2;background:#f5f5f2;color:#777;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}
+.embedded-lead-bar span:first-child{color:#111}
+.embedded-lead iframe{width:100%;height:760px;border:0;display:block;background:#fff}
+.iframe-help a{color:#222;font-weight:800}
+@media(max-width:620px){
+  .embedded-lead{margin-top:14px;border-radius:13px}
+  .embedded-lead-bar{height:38px;padding:0 11px;font-size:7px}
+  .embedded-lead iframe{height:720px}
+}
