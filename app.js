@@ -22,6 +22,7 @@ const products=[
 ];
 function money(n){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(n)}
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function setText(id,value){const el=$("#"+id); if(el) el.textContent=value;}
 function renderLoads(){
  $("#appliances").innerHTML=applianceData.map(a=>`<label class="appliance"><input type="checkbox" data-load="${a.id}" ${S.loads[a.id]?"checked":""}><div><b>${a.n}</b><small>${a.w.toLocaleString()} W · ${a.d}</small></div></label>`).join("");
  $$("[data-load]").forEach(x=>x.addEventListener("change",()=>{S.loads[x.dataset.load]=x.checked;calculate()}));
@@ -62,24 +63,24 @@ function calculate(){
  const projectLow=solarLow+p.low,projectHigh=solarHigh+p.high;
  const annualBill=S.bill*12;
  const twentyFive=Math.max(0,annualBill*offset/100*25);
- $("#previewKw").innerHTML=kw.toFixed(1)+' <small>kW</small>';
+ const previewKw=$("#previewKw"); if(previewKw) previewKw.innerHTML=kw.toFixed(1)+' <small>kW</small>';
  const liveKw=$("#liveKw"); if(liveKw) liveKw.textContent=kw.toFixed(1)+" kW";
  const liveOffset=$("#liveOffset"); if(liveOffset) liveOffset.textContent=Math.round(offset)+"%";
  const liveBattery=$("#liveBattery"); if(liveBattery) liveBattery.textContent=battery+" kWh";
  const liveLoad=$("#liveLoad"); if(liveLoad) liveLoad.textContent=Math.round(load.w).toLocaleString()+" W";
- $("#previewOffset").textContent=Math.round(offset)+"%";
- $("#previewBattery").textContent=battery+" kWh";
- $("#previewPrice").textContent=money(projectLow)+"+";
- $("#previewProgress").style.width=offset+"%";
- $("#watts").textContent=Math.round(load.w).toLocaleString()+" W";
- $("#daily").textContent=load.k.toFixed(1)+" kWh";
- $("#battery").textContent=battery+" kWh";
- $("#rKw").textContent=kw.toFixed(1)+" kW";$("#rOffset").textContent=Math.round(offset)+"%";$("#rBattery").textContent=battery+" kWh";
- $("#rProduction").textContent=Math.round(production).toLocaleString();
- $("#rAnnual").textContent=money(annualBill);
- $("#rRuntime").textContent=runtime>=24?Math.round(runtime/24*10)/10+" days":Math.max(.5,Math.round(runtime*10)/10)+" hrs";
- $("#rPrice").textContent=money(projectLow)+"–"+money(projectHigh);
- $("#savings25").textContent=money(twentyFive);
+ const previewOffset=$("#previewOffset"); if(previewOffset) previewOffset.textContent=Math.round(offset)+"%";
+ const previewBattery=$("#previewBattery"); if(previewBattery) previewBattery.textContent=battery+" kWh";
+ const previewPrice=$("#previewPrice"); if(previewPrice) previewPrice.textContent=money(projectLow)+"+";
+ const previewProgress=$("#previewProgress"); if(previewProgress) previewProgress.style.width=offset+"%";
+ setText("watts",Math.round(load.w).toLocaleString()+" W");
+ setText("daily",load.k.toFixed(1)+" kWh");
+ setText("battery",battery+" kWh");
+ setText("rKw",kw.toFixed(1)+" kW");setText("rOffset",Math.round(offset)+"%");setText("rBattery",battery+" kWh");
+ setText("rProduction",Math.round(production).toLocaleString());
+ setText("rAnnual",money(annualBill));
+ setText("rRuntime",runtime>=24?Math.round(runtime/24*10)/10+" days":Math.max(.5,Math.round(runtime*10)/10)+" hrs");
+ setText("rPrice",money(projectLow)+"–"+money(projectHigh));
+ setText("savings25",money(twentyFive));
  $("#savingsText").textContent=`At the modeled ${Math.round(offset)}% energy offset, the calculator estimates roughly ${money(twentyFive)} of electricity spending avoided over 25 years before accounting for utility-rate changes, system degradation, financing and other project costs.`;
  $("#rebatePill").textContent=`Planning RMP rebate: $${p.rebate.toLocaleString()}*`;
  $("#products").innerHTML=products.map(x=>`<article class="product ${x.id===p.id?"recommended":""}">
@@ -95,9 +96,9 @@ function calculate(){
    `The project range combines a planning solar range with the selected battery platform's current website-published installation range. Final pricing requires a site assessment.`,
    `RMP incentive figures shown here are planning values from Elite Electric's current website and must be verified for the customer's utility territory, equipment and program rules before a quote is issued.`
  ].map(x=>`<li>${x}</li>`).join("");
- $("#leadSummary").textContent=kw.toFixed(1)+" kW · "+Math.round(offset)+"% offset";
- $("#leadBattery").textContent=battery+" kWh";
- $("#leadZip").textContent=S.zip||"—";
+ setText("leadSummary",kw.toFixed(1)+" kW · "+Math.round(offset)+"% offset");
+ setText("leadBattery",battery+" kWh");
+ setText("leadZip",S.zip||"—");
 }
 function setChoice(group,value){
  $$(group+" .card").forEach(x=>x.classList.toggle("selected",x.dataset.v===value));
