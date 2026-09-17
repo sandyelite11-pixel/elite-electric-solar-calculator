@@ -1,40 +1,45 @@
-# Elite Electric — Utah Solar & Battery Calculator v4
+# Elite Electric — Utah Solar & Battery Calculator v5
 
-A static, responsive solar + battery planning calculator for Elite Electric. Built for GitHub + Vercel and easy WordPress iframe embedding.
+A calculator-only, responsive solar + battery planning application for Elite Electric. Built for GitHub + Vercel and designed to be embedded into a WordPress page with an iframe.
 
-## What's improved in v4
-- Logo is embedded directly in `index.html` with a fresh optimized PNG, so the header does not depend on a missing asset path.
-- The calculator now posts its real document height to a parent iframe using `postMessage`.
-- Included `EMBED-SNIPPET.html` with a WordPress Custom HTML snippet that automatically resizes the calculator iframe as the customer moves through each step.
-- Contact-form iframe is much more compact on desktop and mobile.
-- Added an **Expand form** control for customers who need more room.
-- Reduced mobile spacing, hero height, card padding, and calculator margins for a tighter phone experience.
+## v5 changes
+- Removed the marketing hero section from the application.
+- Removed the application footer.
+- Kept only a compact Elite Electric logo bar as calculator chrome; no navigation, marketing hero, or footer is included.
+- Calculator now sits flush in the page instead of using a large negative-margin card layout.
+- Removed the embedded contact-form iframe that caused unavoidable blank space because the form is hosted on a different origin.
+- The final calculator step now uses the dedicated Elite Electric assessment page: https://eliteelectricpro.com/lead/
+- The assessment button opens the form in a full page, which is substantially better on mobile than a fixed-height cross-origin iframe.
+- Kept the calculator-to-parent auto-height `postMessage` system for the main Vercel iframe.
+- Tightened mobile spacing and widths to avoid horizontal overflow.
+- Logo remains embedded directly in `index.html`.
 
 ## Files
-- `index.html` — application markup
+- `index.html` — calculator markup
 - `styles.css` — responsive styling
 - `app.js` — calculator logic + auto-height messaging
 - `assets/` — backup logo assets
-- `EMBED-SNIPPET.html` — WordPress iframe embed with automatic height adjustment
+- `EMBED-SNIPPET.html` — WordPress Custom HTML iframe snippet with automatic height adjustment
 - `vercel.json` — basic security headers
 
 ## GitHub → Vercel
 1. Upload the contents of this folder to your GitHub repository. Keep `index.html` in the repository root.
-2. Import that repository into Vercel.
+2. Import the repository into Vercel.
 3. Deploy as a static site; no build command or npm install is required.
 4. Copy the Vercel production URL.
-5. Open `EMBED-SNIPPET.html`, replace `https://YOUR-CALCULATOR.vercel.app/` with the real Vercel URL, and paste the snippet into a WordPress Custom HTML block.
+5. In `EMBED-SNIPPET.html`, replace `https://YOUR-CALCULATOR.vercel.app/` with the real Vercel URL.
+6. Paste the snippet into a WordPress Custom HTML block on the dedicated calculator page.
 
-## WordPress embed
-The included snippet listens for `elite-electric-calculator-height` messages from the Vercel app. This avoids a fixed 2,900px iframe and removes most empty space on mobile and desktop.
+## Recommended WordPress page
+For the cleanest experience, the WordPress page should contain only the calculator iframe (plus optional WordPress page-level title/SEO content outside the iframe if desired). Do not add another hero or footer inside the Vercel application.
 
-If WordPress strips `<script>` tags from a Custom HTML block, put the iframe HTML in the page and place the small JavaScript listener in an Elementor/WordPress HTML widget or the site's custom footer JavaScript area.
+The included snippet listens for `elite-electric-calculator-height` messages from the Vercel app. This lets the WordPress iframe resize to the actual calculator height instead of using a large fixed 2,900px height.
 
-## Contact form
-The calculator uses the existing Elite Electric MetForm URL:
+## Contact / assessment
+The final step links directly to Elite Electric's dedicated lead form:
 https://eliteelectricpro.com/lead/
 
-Because the form is hosted on a different origin, the calculator cannot inspect its internal height or inject values into its fields unless the WordPress page is explicitly configured to support a cross-origin messaging/prefill integration. The compact height + expand control is therefore intentional.
+This is intentional. A cross-origin form iframe cannot reliably report its internal height to the calculator, so embedding it at a fixed height can create blank space. Opening the dedicated form as a normal page gives the customer the site's native mobile layout and avoids the blank-area problem.
 
 ## Planning disclaimer
 This tool is a planning estimator, not an engineering design, utility bill guarantee, quote, or financial/tax advice. Verify current utility incentives, rates, equipment availability, project pricing, and customer-specific eligibility before making commitments.

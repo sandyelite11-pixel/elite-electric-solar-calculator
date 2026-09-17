@@ -132,16 +132,7 @@ function sendEmbedHeight(){
     window.parent.postMessage({type:"elite-electric-calculator-height",height},"*");
   }
 }
-function initContactForm(){
-  const shell=$(".iframe-shell"), btn=$("#expandForm");
-  if(!shell||!btn)return;
-  btn.addEventListener("click",()=>{
-    const expanded=shell.classList.toggle("expanded");
-    btn.textContent=expanded?"Collapse form ↑":"Expand form ↗";
-    setTimeout(sendEmbedHeight,80);
-  });
-}
 window.addEventListener("load",()=>{sendEmbedHeight();setTimeout(sendEmbedHeight,350);setTimeout(sendEmbedHeight,1000);});
 window.addEventListener("resize",()=>setTimeout(sendEmbedHeight,100));
 if(window.ResizeObserver){new ResizeObserver(sendEmbedHeight).observe(document.body);}
-renderLoads();calculate();initContactForm();setTimeout(sendEmbedHeight,120);
+renderLoads();calculate();setTimeout(sendEmbedHeight,120);
