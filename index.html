@@ -29,6 +29,16 @@
       </div>
     </div>
 
+    <div class="live-estimate" aria-live="polite" aria-label="Live estimate preview">
+      <div class="live-estimate-head"><span>LIVE ESTIMATE</span><small>Updates as you make selections</small></div>
+      <div class="live-estimate-grid">
+        <div><span>Solar</span><strong id="liveKw">—</strong></div>
+        <div><span>Bill offset</span><strong id="liveOffset">—</strong></div>
+        <div><span>Battery</span><strong id="liveBattery">—</strong></div>
+        <div><span>Backup load</span><strong id="liveLoad">—</strong></div>
+      </div>
+    </div>
+
     <form id="form" novalidate>
       <section class="screen active" data-screen="1">
         <div class="screen-title"><label>01 / YOUR HOME</label><h2>Let's start with the electric bill.</h2><p>Your bill is the most useful starting point for estimating annual energy consumption.</p></div>
@@ -111,7 +121,7 @@
       </section>
 
       <section class="screen" data-screen="5">
-        <div class="screen-title"><label>05 / NEXT STEP</label><h2>Turn the estimate into a property-specific design.</h2><p>Send your information to Elite Electric. The calculator results stay on this page; the contact form is loaded directly from your website.</p></div>
+        <div class="screen-title"><label>05 / NEXT STEP</label><h2>Turn the estimate into a property-specific design.</h2><p>Send your information to Elite Electric. Your estimate stays on this page while you complete the assessment form.</p></div>
         <div class="lead-summary">
           <div><span>Your estimate</span><strong id="leadSummary">—</strong></div>
           <div><span>Battery goal</span><strong id="leadBattery">—</strong></div>

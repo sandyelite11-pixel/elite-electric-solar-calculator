@@ -43,3 +43,10 @@ This is intentional. A cross-origin form iframe cannot reliably report its inter
 
 ## Planning disclaimer
 This tool is a planning estimator, not an engineering design, utility bill guarantee, quote, or financial/tax advice. Verify current utility incentives, rates, equipment availability, project pricing, and customer-specific eligibility before making commitments.
+
+
+## v7 improvements
+- Added a live estimate strip showing solar size, modeled bill offset, battery target, and backup load.
+- Fixed a JavaScript event-handler typo that could prevent appliance changes from recalculating.
+- Added safer input clamping and initialization handling.
+- Increased text contrast throughout the calculator for mobile readability.

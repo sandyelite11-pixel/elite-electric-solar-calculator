@@ -76,3 +76,26 @@ form{padding:38px 36px 34px}
   .embedded-lead-bar{height:38px;padding:0 11px;font-size:7px}
   .embedded-lead iframe{height:720px}
 }
+
+
+/* v7: high-contrast text + visible live calculations */
+:root{--muted-strong:#4b4b4b;--muted-soft:#5f5f5f}
+body{color:#171717}
+.screen-title label,.box-title label,.cta label,.contact-head label{color:#4b4b4b}
+.screen-title p,.notice,.mini-note,.field small,.card small,.goal small,.load-head small,.appliance small,.checkrow small,.metrics span,.metrics small,.product p,.product .tag,.result-notes li,.disclaimer,.iframe-help,.contact-launch-copy label,.contact-launch-copy p,.savings-box p,.savings-number span{color:var(--muted-strong)}
+.steps-meta,.step{color:#555}
+.step.active{color:#111}
+.preview-label,.preview-grid span{color:#555}
+.field>b,.choice-title,.load-head b,.appliance b,.checkrow b,.box-title h3,.result-notes h3{color:#171717}
+.field input,.field select{color:#111;background:#fff;border-color:#bdbdb8}
+.field input::placeholder{color:#6a6a6a;opacity:1}
+.live-estimate{margin:0 36px;border:1px solid #d5d5d0;border-radius:15px;background:#111;color:#fff;overflow:hidden}
+.live-estimate-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #303030}
+.live-estimate-head span{font-size:9px;font-weight:950;letter-spacing:.15em;color:#fff}
+.live-estimate-head small{font-size:9px;color:#d1d1d1}
+.live-estimate-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.live-estimate-grid div{padding:12px 14px;border-right:1px solid #303030}
+.live-estimate-grid div:last-child{border-right:0}
+.live-estimate-grid span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.09em;color:#cfcfcf}
+.live-estimate-grid strong{display:block;color:var(--gold);font-size:20px;line-height:1.1;margin-top:5px}
+@media(max-width:620px){.live-estimate{margin:0 14px;border-radius:13px}.live-estimate-head{padding:9px 11px}.live-estimate-head small{font-size:8px}.live-estimate-grid div{padding:11px 10px}.live-estimate-grid span{font-size:7px}.live-estimate-grid strong{font-size:16px}}

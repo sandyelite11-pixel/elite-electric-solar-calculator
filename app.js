@@ -24,25 +24,25 @@ function money(n){return new Intl.NumberFormat("en-US",{style:"currency",currenc
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
 function renderLoads(){
  $("#appliances").innerHTML=applianceData.map(a=>`<label class="appliance"><input type="checkbox" data-load="${a.id}" ${S.loads[a.id]?"checked":""}><div><b>${a.n}</b><small>${a.w.toLocaleString()} W · ${a.d}</small></div></label>`).join("");
- $$("[data-load]").forEach(x=>x.addEventListener("change",()=>{S.loads[x.dataset.load]=x.checked;calc()}));
+ $$("[data-load]").forEach(x=>x.addEventListener("change",()=>{S.loads[x.dataset.load]=x.checked;calculate()}));
 }
 function loadCalc(){
  let w=0,k=0;
  applianceData.forEach(a=>{if(S.loads[a.id]){w+=a.w;k+=a.w*a.h/1000}});
  const simultaneous=w*(S.goal==="essential"?.52:S.goal==="comfort"?.72:1);
  const daily=k*(S.goal==="essential"?.62:S.goal==="comfort"?.78:1);
- return {w:simultaneous,k:daily};
+ return {w:Math.max(0,simultaneous),k:Math.max(0,daily)};
 }
 function calculate(){
- S.bill=Number($("#bill").value)||165;S.sqft=Number($("#sqft").value)||2200;S.shade=Number($("#shade").value)||0;S.heating=$("#heating").value;
+ S.bill=clamp(Number($("#bill").value)||165,50,2500);S.sqft=clamp(Number($("#sqft").value)||2200,500,15000);S.shade=clamp(Number($("#shade").value)||0,0,35);S.heating=$("#heating").value;
  const orient={south:1,se:.95,ew:.88,north:.68}[S.orientation];
  const roof={normal:1,complex:.94,limited:.90}[S.roof];
- const shade=1-S.shade/100*.72;
+ const shade=clamp(1-S.shade/100*.72,.7,1);
  const heatingFactor={gas:1,heatpump:1.12,electric:1.18,mixed:1.06}[S.heating];
  // Editable planning assumptions:
- const sun=4.8*365*orient*roof*shade;
+ const sun=Math.max(500,4.8*365*orient*roof*shade);
  const rate=.145;
- const annualUse=S.bill*12/rate*heatingFactor;
+ const annualUse=Math.max(1,S.bill*12/rate*heatingFactor);
  const target=S.resilience?.92:.86;
  let kw=clamp(annualUse*target/sun,3,25);
  if(S.sqft<1300)kw=Math.min(kw,11);
@@ -54,15 +54,19 @@ function calculate(){
  let battery=Math.max(min,load.k*(S.goal==="whole"?1.35:S.goal==="comfort"?1.55:1.8));
  battery=Math.ceil(battery/2)*2;battery=clamp(battery,8,40);
  const usable=battery*.9;
- const runtime=load.w?usable/(load.w/1000):0;
+ const runtime=load.w>0?usable/(load.w/1000):0;
  const solarLow=kw*2000,solarHigh=kw*2625;
  let p=products.find(x=>x.id==="tesla");
  if(load.w<5500 && S.goal==="essential")p=products.find(x=>x.id==="enphase");
  if(battery>=16 || S.goal==="whole")p=products.find(x=>x.id==="sigenergy");
  const projectLow=solarLow+p.low,projectHigh=solarHigh+p.high;
  const annualBill=S.bill*12;
- const twentyFive=annualBill*offset/100*25;
+ const twentyFive=Math.max(0,annualBill*offset/100*25);
  $("#previewKw").innerHTML=kw.toFixed(1)+' <small>kW</small>';
+ const liveKw=$("#liveKw"); if(liveKw) liveKw.textContent=kw.toFixed(1)+" kW";
+ const liveOffset=$("#liveOffset"); if(liveOffset) liveOffset.textContent=Math.round(offset)+"%";
+ const liveBattery=$("#liveBattery"); if(liveBattery) liveBattery.textContent=battery+" kWh";
+ const liveLoad=$("#liveLoad"); if(liveLoad) liveLoad.textContent=Math.round(load.w).toLocaleString()+" W";
  $("#previewOffset").textContent=Math.round(offset)+"%";
  $("#previewBattery").textContent=battery+" kWh";
  $("#previewPrice").textContent=money(projectLow)+"+";
@@ -135,4 +139,15 @@ function sendEmbedHeight(){
 window.addEventListener("load",()=>{sendEmbedHeight();setTimeout(sendEmbedHeight,350);setTimeout(sendEmbedHeight,1000);});
 window.addEventListener("resize",()=>setTimeout(sendEmbedHeight,100));
 if(window.ResizeObserver){new ResizeObserver(sendEmbedHeight).observe(document.body);}
-renderLoads();calculate();setTimeout(sendEmbedHeight,120);
+function initCalculator(){
+  try{
+    renderLoads();
+    calculate();
+    setTimeout(sendEmbedHeight,120);
+  }catch(err){
+    console.error("Elite Electric calculator initialization failed",err);
+    const live=document.querySelector(".live-estimate");
+    if(live){live.insertAdjacentHTML("beforeend",'<div style="padding:10px 14px;color:#fff;background:#8a1f1f;font-size:11px">Please refresh the calculator to continue.</div>');}
+  }
+}
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded",initCalculator,{once:true}); else initCalculator();
