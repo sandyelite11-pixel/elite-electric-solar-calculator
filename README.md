@@ -1,52 +1,43 @@
-# Elite Electric — Utah Solar & Battery Calculator v5
+# Elite Electric Utah Solar & Battery Calculator v9
 
-A calculator-only, responsive solar + battery planning application for Elite Electric. Built for GitHub + Vercel and designed to be embedded into a WordPress page with an iframe.
+Calculator-only responsive app for GitHub + Vercel, with a persistent lead database and a private lead portal.
 
-## v5 changes
-- Removed the marketing hero section from the application.
-- Removed the application footer.
-- Kept only a compact Elite Electric logo bar as calculator chrome; no navigation, marketing hero, or footer is included.
-- Calculator now sits flush in the page instead of using a large negative-margin card layout.
-- Removed the embedded contact-form iframe that caused unavoidable blank space because the form is hosted on a different origin.
-- The final calculator step now uses the dedicated Elite Electric assessment page: https://eliteelectricpro.com/lead/
-- The assessment button opens the form in a full page, which is substantially better on mobile than a fixed-height cross-origin iframe.
-- Kept the calculator-to-parent auto-height `postMessage` system for the main Vercel iframe.
-- Tightened mobile spacing and widths to avoid horizontal overflow.
-- Logo remains embedded directly in `index.html`.
+## What changed in v9
+- Natural lead capture is built into the first calculator screen: name, email, phone and ZIP are collected before the visitor continues.
+- The visitor can also click **Save my estimate** at any time on the first screen.
+- Calculator choices and estimate results are saved to the lead record so the portal contains the information entered in the calculator.
+- The existing Elite Electric assessment form remains embedded at the end: `https://eliteelectricpro.com/lead/`.
+- Private portal is available at `/portal.html`.
+- Portal supports search, sorting, lead counts and expandable full lead details.
+- Leads older than 60 days are deleted whenever the portal data is loaded/refreshed.
+- Session login uses server-side environment variables; the password is NOT stored in the public GitHub files.
+- Same Elite Electric logo + favicon retained.
 
-## Files
-- `index.html` — calculator markup
-- `styles.css` — responsive styling
-- `app.js` — calculator logic + auto-height messaging
-- `assets/` — backup logo assets
-- `EMBED-SNIPPET.html` — WordPress Custom HTML iframe snippet with automatic height adjustment
-- `vercel.json` — basic security headers
+## Required free backend setup
+The calculator needs a small database because browser localStorage cannot reliably store leads for the business across different visitors/devices.
 
-## GitHub → Vercel
-1. Upload the contents of this folder to your GitHub repository. Keep `index.html` in the repository root.
-2. Import the repository into Vercel.
-3. Deploy as a static site; no build command or npm install is required.
-4. Copy the Vercel production URL.
-5. In `EMBED-SNIPPET.html`, replace `https://YOUR-CALCULATOR.vercel.app/` with the real Vercel URL.
-6. Paste the snippet into a WordPress Custom HTML block on the dedicated calculator page.
+Recommended setup: a free Supabase project.
 
-## Recommended WordPress page
-For the cleanest experience, the WordPress page should contain only the calculator iframe (plus optional WordPress page-level title/SEO content outside the iframe if desired). Do not add another hero or footer inside the Vercel application.
+1. Create a Supabase project.
+2. Open SQL Editor and run `supabase-schema.sql`.
+3. In Vercel Project Settings → Environment Variables, add:
+   - `SUPABASE_URL` = your Supabase project URL
+   - `SUPABASE_SERVICE_ROLE_KEY` = your Supabase service-role key (server-side only; never put this in browser JavaScript)
+   - `PORTAL_USER` = your chosen portal username
+   - `PORTAL_PASSWORD` = your chosen portal password
+   - `SESSION_SECRET` = a long random secret string
+4. Redeploy the Vercel project.
 
-The included snippet listens for `elite-electric-calculator-height` messages from the Vercel app. This lets the WordPress iframe resize to the actual calculator height instead of using a large fixed 2,900px height.
+For the requested portal credentials, set `PORTAL_USER` to `jake` and `PORTAL_PASSWORD` to the password you supplied in the chat. Do not commit those values into GitHub.
 
-## Contact / assessment
-The final step links directly to Elite Electric's dedicated lead form:
-https://eliteelectricpro.com/lead/
+## Lead retention
+The API removes records whose `created_at` is more than 60 days old whenever an authenticated portal request loads the lead list. This avoids needing a paid background scheduler. If you later want strict midnight/daily deletion even when nobody opens the portal, a scheduled job can be added.
 
-This is intentional. A cross-origin form iframe cannot reliably report its internal height to the calculator, so embedding it at a fixed height can create blank space. Opening the dedicated form as a normal page gives the customer the site's native mobile layout and avoids the blank-area problem.
+## Embedded form height
+The calculator listens for `elite-lead-height` messages from the embedded `/lead/` page. Add the code in `LEAD-FORM-HEIGHT-SNIPPET.html` to the `/lead/` page if you want the nested iframe to automatically shrink/grow to the exact form height.
 
-## Planning disclaimer
-This tool is a planning estimator, not an engineering design, utility bill guarantee, quote, or financial/tax advice. Verify current utility incentives, rates, equipment availability, project pricing, and customer-specific eligibility before making commitments.
+## WordPress iframe
+Use the existing `EMBED-SNIPPET.html`, replacing the Vercel URL with the deployed calculator URL. The app continues to send `elite-electric-calculator-height` messages so the outer WordPress iframe can resize to the calculator's content.
 
-
-## v7 improvements
-- Added a live estimate strip showing solar size, modeled bill offset, battery target, and backup load.
-- Fixed a JavaScript event-handler typo that could prevent appliance changes from recalculating.
-- Added safer input clamping and initialization handling.
-- Increased text contrast throughout the calculator for mobile readability.
+## Security note
+The portal credentials are only checked by the Vercel serverless function. The Supabase service-role key is also only used server-side. Never paste either secret into `index.html`, `portal.html`, or client-side JavaScript.

@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const S={
- step:1,zip:"",bill:165,sqft:2200,heating:"gas",orientation:"south",shade:10,roof:"normal",
+ step:1,zip:"",bill:165,sqft:2200,heating:"gas",orientation:"south",shade:10,roof:"normal",leadKey:null,calc:null,
  goal:"essential",resilience:true,
  loads:{fridge:true,lights:true,wifi:true,tv:false,fans:false,microwave:false,washer:false,ac:false,heat:false}
 };
@@ -113,13 +113,57 @@ function go(n){
  window.scrollTo({top:$("#calculator").offsetTop-12,behavior:"smooth"});
 }
 function valid(){
- if(S.step===1){
-   S.zip=$("#zip").value.trim();
-   if(!/^(84)\d{3}$/.test(S.zip)){alert("Please enter a valid Utah ZIP code beginning with 84.");$("#zip").focus();return false}
-   if(S.bill<50){alert("Please enter a monthly bill of at least $50.");$("#bill").focus();return false}
- }
- return true;
+  if(S.step===1){
+    S.zip=$("#zip").value.trim();
+    const name=$("#leadName").value.trim();
+    const email=$("#leadEmail").value.trim();
+    const phone=$("#leadPhone").value.trim();
+    if(!/^(84)\d{3}$/.test(S.zip)){alert("Please enter a valid Utah ZIP code beginning with 84.");$("#zip").focus();return false}
+    if(S.bill<50){alert("Please enter a monthly bill of at least $50.");$("#bill").focus();return false}
+    if(!name){alert("Please enter your name so we can save your estimate.");$("#leadName").focus();return false}
+    if(!/^\S+@\S+\.\S+$/.test(email)){alert("Please enter a valid email address.");$("#leadEmail").focus();return false}
+    if(phone.replace(/\D/g,"").length<7){alert("Please enter a valid phone number.");$("#leadPhone").focus();return false}
+    if(!$("#leadConsent").checked){alert("Please confirm that Elite Electric may contact you about this estimate.");$("#leadConsent").focus();return false}
+  }
+  return true;
 }
+function buildLeadPayload(){
+  return {
+    lead_key:S.leadKey || (S.leadKey=crypto.randomUUID()),
+    name:$("#leadName").value.trim(),
+    email:$("#leadEmail").value.trim(),
+    phone:$("#leadPhone").value.trim(),
+    zip:S.zip || $("#zip").value.trim(),
+    data:{
+      source:"Elite Electric Solar & Battery Calculator",
+      step:S.step,
+      home:{bill:S.bill,sqft:S.sqft,heating:S.heating},
+      roof:{orientation:S.orientation,shade:S.shade,roof:S.roof},
+      battery:{goal:S.goal,resilience:S.resilience},
+      loads:S.loads,
+      estimate:S.calc || null,
+      saved_at:new Date().toISOString()
+    }
+  };
+}
+async function saveLead(silent=false){
+  const status=$("#saveLeadStatus");
+  try{
+    const r=await fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(buildLeadPayload())});
+    const out=await r.json();
+    if(!r.ok) throw new Error(out.error||"Could not save estimate");
+    status.textContent="Saved — your estimate is securely stored.";
+    status.className="saved";
+    if(!silent) setTimeout(()=>{status.textContent=""},5000);
+    return true;
+  }catch(err){
+    console.error(err);
+    status.textContent="We couldn't save it right now. You can still continue.";
+    status.className="error";
+    return false;
+  }
+}
+
 $$("#orientation .card").forEach(x=>x.onclick=()=>{S.orientation=x.dataset.v;setChoice("#orientation",S.orientation);calculate()});
 $$("#roofArea .card").forEach(x=>x.onclick=()=>{S.roof=x.dataset.v;setChoice("#roofArea",S.roof);calculate()});
 $$("#goals .goal").forEach(x=>x.onclick=()=>{$$("#goals .goal").forEach(y=>y.classList.remove("selected"));x.classList.add("selected");S.goal=x.dataset.v;calculate()});
@@ -128,7 +172,13 @@ $("#bill").oninput=calculate;$("#sqft").oninput=calculate;$("#heating").onchange
 $("#resilience").onchange=e=>{S.resilience=e.target.checked;calculate()};
 $("#zip").oninput=e=>e.target.value=e.target.value.replace(/\D/g,"").slice(0,5);
 $("#reset").onclick=()=>{Object.keys(S.loads).forEach(k=>S.loads[k]=["fridge","lights","wifi"].includes(k));renderLoads();calculate()};
-$("#next").onclick=()=>{if(valid()&&S.step<5)go(S.step+1)};
+$("#saveLead").onclick=async()=>{if(valid()) await saveLead(false)};
+$("#next").onclick=async()=>{
+  if(!valid() || S.step>=5) return;
+  if(S.step===1){const ok=await saveLead(true); if(!ok) return;}
+  else if(S.leadKey){await saveLead(true);}
+  go(S.step+1);
+};
 $("#back").onclick=()=>{if(S.step>1)go(S.step-1)};
 
 function sendEmbedHeight(){
@@ -139,6 +189,12 @@ function sendEmbedHeight(){
 }
 window.addEventListener("load",()=>{sendEmbedHeight();setTimeout(sendEmbedHeight,350);setTimeout(sendEmbedHeight,1000);});
 window.addEventListener("resize",()=>setTimeout(sendEmbedHeight,100));
+window.addEventListener("message",e=>{
+  if(!e.data || e.data.type!=="elite-lead-height") return;
+  const h=parseInt(e.data.height,10);
+  const frame=$("#leadFrame");
+  if(frame && h>300 && h<8000){ frame.style.height=(h+12)+"px"; setTimeout(sendEmbedHeight,50); }
+});
 if(window.ResizeObserver){new ResizeObserver(sendEmbedHeight).observe(document.body);}
 function initCalculator(){
   try{

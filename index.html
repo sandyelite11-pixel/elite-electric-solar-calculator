@@ -53,6 +53,21 @@
           <label class="field"><b>Primary heating / large loads</b><select id="heating"><option value="gas">Gas / conventional</option><option value="heatpump">Heat pump</option><option value="electric">Electric resistance</option><option value="mixed">Mixed / not sure</option></select></label>
         </div>
         <div class="notice"><strong>Planning estimate only.</strong> Final system size, production, pricing, interconnection and battery configuration require a property-specific review.</div>
+
+        <div class="save-lead-card" id="saveLeadCard">
+          <div class="save-lead-copy">
+            <span class="eyebrow">SAVE YOUR ESTIMATE</span>
+            <h3>Want us to keep your estimate for you?</h3>
+            <p>Enter your name and contact details now. You can keep using the calculator, and Elite Electric can follow up without making you reach the final page first.</p>
+          </div>
+          <div class="save-lead-fields">
+            <label class="field"><b>Your name *</b><input id="leadName" autocomplete="name" placeholder="John Smith"></label>
+            <label class="field"><b>Email *</b><input id="leadEmail" type="email" autocomplete="email" placeholder="john@example.com"></label>
+            <label class="field"><b>Phone *</b><input id="leadPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(801) 555-0123"></label>
+          </div>
+          <label class="consent"><input id="leadConsent" type="checkbox"><span>I agree that Elite Electric may use these details to contact me about my solar / battery estimate.</span></label>
+          <div class="save-lead-actions"><button type="button" id="saveLead" class="primary small">Save my estimate</button><span id="saveLeadStatus" role="status" aria-live="polite"></span></div>
+        </div>
       </section>
 
       <section class="screen" data-screen="2">
