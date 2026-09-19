@@ -1,4 +1,2 @@
-export default function handler(req, res) {
-  res.setHeader('Set-Cookie','elite_portal_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0');
-  return res.status(200).json({ok:true});
-}
+const {clearCookie,json}=require('./_lib');
+module.exports=async function(req,res){if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});return json(res,200,{ok:true},{'Set-Cookie':clearCookie()})}
