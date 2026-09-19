@@ -1,43 +1,49 @@
-# Elite Electric Utah Solar & Battery Calculator v9
+# Elite Electric Solar + Battery Calculator v10
 
-Calculator-only responsive app for GitHub + Vercel, with a persistent lead database and a private lead portal.
+## What v10 does
+- Calculator-only customer experience; no marketing hero/footer.
+- Captures name, email, phone and ZIP naturally on the first calculator step.
+- No “Save my estimate” button and no customer-facing checkbox asking for permission in that section.
+- On Continue, the calculator sends the contact details plus the calculator selections/results to the private database.
+- Keeps the existing Elite Electric `/lead/` assessment form embedded at the end.
+- Private lead portal at `/portal.html`.
+- Portal searches/sorts leads and shows the full calculator data.
+- Leads older than 60 days are deleted by the API whenever it is used/refreshed.
+- Company-logo favicon included.
 
-## What changed in v9
-- Natural lead capture is built into the first calculator screen: name, email, phone and ZIP are collected before the visitor continues.
-- The visitor can also click **Save my estimate** at any time on the first screen.
-- Calculator choices and estimate results are saved to the lead record so the portal contains the information entered in the calculator.
-- The existing Elite Electric assessment form remains embedded at the end: `https://eliteelectricpro.com/lead/`.
-- Private portal is available at `/portal.html`.
-- Portal supports search, sorting, lead counts and expandable full lead details.
-- Leads older than 60 days are deleted whenever the portal data is loaded/refreshed.
-- Session login uses server-side environment variables; the password is NOT stored in the public GitHub files.
-- Same Elite Electric logo + favicon retained.
+## Important privacy note
+The application should have a privacy notice appropriate to the laws and policies that apply to Elite Electric. This version does not add the checkbox text the customer asked to remove from the calculator UI.
 
-## Required free backend setup
-The calculator needs a small database because browser localStorage cannot reliably store leads for the business across different visitors/devices.
-
-Recommended setup: a free Supabase project.
-
+## Supabase setup (free tier can be used for small lead volumes)
 1. Create a Supabase project.
-2. Open SQL Editor and run `supabase-schema.sql`.
-3. In Vercel Project Settings → Environment Variables, add:
-   - `SUPABASE_URL` = your Supabase project URL
-   - `SUPABASE_SERVICE_ROLE_KEY` = your Supabase service-role key (server-side only; never put this in browser JavaScript)
-   - `PORTAL_USER` = your chosen portal username
-   - `PORTAL_PASSWORD` = your chosen portal password
-   - `SESSION_SECRET` = a long random secret string
-4. Redeploy the Vercel project.
+2. Open SQL Editor.
+3. Run `supabase-schema.sql`.
+4. In Supabase Project Settings / API, copy the project URL and the `service_role` key.
+5. Do NOT put the service-role key in GitHub or browser JavaScript.
 
-For the requested portal credentials, set `PORTAL_USER` to `jake` and `PORTAL_PASSWORD` to the password you supplied in the chat. Do not commit those values into GitHub.
+## Vercel environment variables
+Set these in Vercel Project Settings -> Environment Variables for Production (and Preview if desired):
 
-## Lead retention
-The API removes records whose `created_at` is more than 60 days old whenever an authenticated portal request loads the lead list. This avoids needing a paid background scheduler. If you later want strict midnight/daily deletion even when nobody opens the portal, a scheduled job can be added.
+`SUPABASE_URL` = your Supabase project URL
+`SUPABASE_SERVICE_ROLE_KEY` = your Supabase service-role key
+`PORTAL_USER` = jake
+`PORTAL_PASSWORD` = your chosen portal password
+`SESSION_SECRET` = a long random secret string
 
-## Embedded form height
-The calculator listens for `elite-lead-height` messages from the embedded `/lead/` page. Add the code in `LEAD-FORM-HEIGHT-SNIPPET.html` to the `/lead/` page if you want the nested iframe to automatically shrink/grow to the exact form height.
+The requested portal credentials can be entered through these environment variables; the password is intentionally not hard-coded in the public files.
+
+## Deploy
+Upload the entire folder to GitHub, then import that repository into Vercel. Do not upload secrets into the repository.
+
+## Portal
+After deployment, visit:
+`https://YOUR-CALCULATOR.vercel.app/portal.html`
 
 ## WordPress iframe
-Use the existing `EMBED-SNIPPET.html`, replacing the Vercel URL with the deployed calculator URL. The app continues to send `elite-electric-calculator-height` messages so the outer WordPress iframe can resize to the calculator's content.
+Open `EMBED-SNIPPET.html`, replace the placeholder Vercel URL with your real URL, and paste the snippet into the WordPress HTML/code area where the calculator should appear.
 
-## Security note
-The portal credentials are only checked by the Vercel serverless function. The Supabase service-role key is also only used server-side. Never paste either secret into `index.html`, `portal.html`, or client-side JavaScript.
+## Existing /lead/ form height
+`LEAD-FORM-HEIGHT-SNIPPET.html` can be added to the WordPress `/lead/` page. It lets the nested form report its actual height to the calculator so the calculator can reduce blank iframe space.
+
+## Data retention
+The API removes records older than 60 days when the API is called. If you require deletion at an exact scheduled time even when nobody visits the portal, add a Vercel Cron job or another scheduled task later.

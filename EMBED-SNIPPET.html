@@ -1,24 +1,6 @@
 <div id="elite-electric-calculator-wrap" style="width:100%;overflow:hidden;">
-  <iframe
-    id="elite-electric-calculator"
-    src="https://YOUR-CALCULATOR.vercel.app/"
-    title="Elite Electric Utah Solar & Battery Calculator"
-    style="width:100%;height:1000px;border:0;display:block;"
-    loading="lazy"
-    scrolling="no">
-  </iframe>
+  <iframe id="elite-electric-calculator" src="https://YOUR-CALCULATOR.vercel.app/" title="Elite Electric Utah Solar & Battery Calculator" style="width:100%;height:1100px;border:0;display:block;" loading="lazy" scrolling="no"></iframe>
 </div>
-
 <script>
-(function(){
-  var frame=document.getElementById('elite-electric-calculator');
-  if(!frame)return;
-  window.addEventListener('message',function(e){
-    if(!e.data || e.data.type!=='elite-electric-calculator-height')return;
-    var h=parseInt(e.data.height,10);
-    if(h && h>400 && h<12000) frame.style.height=(h+8)+'px';
-  });
-})();
+(function(){var f=document.getElementById('elite-electric-calculator');if(!f)return;window.addEventListener('message',function(e){if(!e.data||e.data.type!=='elite-electric-calculator-height')return;var h=parseInt(e.data.height,10);if(h&&h>400&&h<14000)f.style.height=(h+8)+'px';});})();
 </script>
-
-<!-- Lead portal: https://YOUR-CALCULATOR.vercel.app/portal.html -->

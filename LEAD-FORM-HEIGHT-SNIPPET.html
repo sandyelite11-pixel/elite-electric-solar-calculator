@@ -1,15 +1,4 @@
-<!-- Add this small script to the Elite Electric /lead/ page so the nested form can report its true height to the calculator. -->
+<!-- Add this small script to the WordPress /lead/ page if you want its height to be reported to the calculator. -->
 <script>
-(function(){
-  function send(){
-    var h=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
-    if(window.parent && window.parent!==window){
-      window.parent.postMessage({type:'elite-lead-height',height:h},'*');
-    }
-  }
-  window.addEventListener('load',send);
-  window.addEventListener('resize',function(){setTimeout(send,100)});
-  if(window.ResizeObserver)new ResizeObserver(send).observe(document.body);
-  setTimeout(send,500);setTimeout(send,1500);
-})();
+(function(){function send(){var h=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);if(window.parent&&window.parent!==window)window.parent.postMessage({type:'elite-lead-form-height',height:h},'*');}window.addEventListener('load',send);window.addEventListener('resize',send);if('ResizeObserver'in window)new ResizeObserver(send).observe(document.body);setTimeout(send,500);setTimeout(send,1500);})();
 </script>
