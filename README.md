@@ -47,3 +47,7 @@ Open `EMBED-SNIPPET.html`, replace the placeholder Vercel URL with your real URL
 
 ## Data retention
 The API removes records older than 60 days when the API is called. If you require deletion at an exact scheduled time even when nobody visits the portal, add a Vercel Cron job or another scheduled task later.
+
+
+## Continue button fix
+The calculator no longer blocks navigation when the lead API/Supabase is not configured or temporarily unavailable. Contact validation still blocks until the required fields are valid. If the API is unavailable, the lead payload is queued locally for a later retry instead of trapping the customer on step 1.
